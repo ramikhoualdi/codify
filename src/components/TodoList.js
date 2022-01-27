@@ -30,7 +30,10 @@ export class TodoList extends Component {
     let tab = [];
     while (i < this.state.list.length) {
       if (this.state.list[i].name === name) {
-        tab.push({ name: this.state.list[i].name, valid: false });
+        tab.push({
+          name: this.state.list[i].name,
+          valid: !this.state.list[i].valid,
+        });
       } else {
         tab.push({
           name: this.state.list[i].name,
@@ -41,23 +44,15 @@ export class TodoList extends Component {
     }
     this.setState({ list: tab });
   }
-  handleUndo(name) {
-    let i = 0;
-    let tab = [];
-    while (i < this.state.list.length) {
-      if (this.state.list[i].name === name) {
-        tab.push({ name: this.state.list[i].name, valid: true });
-      } else {
-        tab.push({
-          name: this.state.list[i].name,
-          valid: this.state.list[i].valid,
-        });
+  handleIsDone() {
+    let s = 0;
+    for (let i = 0; i < this.state.list.length; i++) {
+      if (this.state.list[i].valid === true) {
+        s++;
       }
-      i++;
     }
-    this.setState({ list: tab });
+    return s;
   }
-
   render() {
     return (
       <>
@@ -68,25 +63,27 @@ export class TodoList extends Component {
             value={this.state.value}
             onChange={this.handleChange.bind(this)}
           />
-          <button className="btn1"onClick={() => this.handleAdd()}>add</button>
+          <button className="btn1" onClick={() => this.handleAdd()}>
+            add
+          </button>
+        </div>
+        <div className="container">
+          <p>
+            {this.handleIsDone()} remaining out of {this.state.list.length} tasks
+          </p>
         </div>
         <div className="container">
           <ul>
             {this.state.list.map((item, index) => (
               <div key={index}>
-                {item.valid ? (
-                  <div className="todo-container">
-                    <li className="todo">{item.name}</li>
-                    <button className="btn1"onClick={() => this.handleDo(item.name)}>do</button>
-                  </div>
-                ) : (
-                  <div className="todo-container">
-                    <li className="todo-done">{item.name}</li>
-                    <button className="btn1"onClick={() => this.handleUndo(item.name)}>
-                      undo
-                    </button>
-                  </div>
-                )}
+                <div className="todo-container">
+                  <li
+                    className={item.valid ? "todo" : "todo-done"}
+                    onClick={() => this.handleDo(item.name)}
+                  >
+                    {item.name}
+                  </li>
+                </div>
               </div>
             ))}
           </ul>
